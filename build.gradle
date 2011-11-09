@@ -1,0 +1,45 @@
+defaultTasks 'intro', 'loadfile'
+
+task loadfile << {
+    def files = file('../../Documents/agile_files').listFiles().sort()
+    files.each { File file ->
+        if (file.isFile()) {
+            ant.loadfile(srcFile: file, property: file.name)
+            println " *** ${file.name} ***"
+            println "${ant.properties[file.name]}"
+        }
+    }
+}
+
+task hello << {
+    println 'Hello Earth!'
+}
+
+hello.doFirst {
+    println 'Hello Venus'
+}
+
+hello.doLast {
+    println 'Hello Mars'
+}
+
+hello << {
+    println 'Hello Jupiter'
+}
+
+task intro(dependsOn: hello) << {
+    println "I'm Gradle"
+}
+
+10.times { counter ->
+	if(counter > 0){
+		task "task$counter"(dependsOn: "task${counter - 1}") << {
+	        println "I'm task number $counter"
+	    }
+	} else {
+		task "task$counter" << {
+	        println "I'm task number $counter"
+	    }
+	}
+    
+}
